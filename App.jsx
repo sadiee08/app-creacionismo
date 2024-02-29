@@ -10,17 +10,26 @@ import store from './store/store.js';
 
 const Stack = createNativeStackNavigator();
 
-const App = () => {
-  return (
+function App() {
+ // Assuming selectUsers or another selector returns the authentication state
+ const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+
+ return (
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Login" component={LoginPage} options={{headerShown: false}} />
-          <Stack.Screen name="Home" component={Home} />
+          {isAuthenticated ? (
+            <>
+              <Stack.Screen name="Home" component={Home} />
+              {/* Add other screens here */}
+            </>
+          ) : (
+            <Stack.Screen name="Login" component={LoginPage} />
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
-  );
-};
+ );
+}
 
 export default App;
