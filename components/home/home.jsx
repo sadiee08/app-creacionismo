@@ -6,22 +6,9 @@ import { setUser } from '../../store/usersSlice.js';
 import { useNavigation } from '@react-navigation/core';
 
 const Home = () => {
-  const navigation = useNavigation();
-  const handleSingOut = () => {
-    auth.signOut()
-    .then(() => {
-      navigation.replace('Login');
-    })
-    .catch(error => alert(error.message));
-  }
-
   return (
    <View style={styles.container}>
-      <Text>Email: {auth.currentUser?.email}</Text>     
-      <TouchableOpacity style={styles.button} onPress={handleSingOut}>
-        <Text style={styles.buttonText}>Sign Out</Text>
-
-      </TouchableOpacity>
+      <Text style={styles.text}>Bienvenido {auth.currentUser?.email}</Text>     
    </View>
   );
 };
@@ -34,13 +21,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  button: {
-    backgroundColor: '#f4511e',
-    padding: 10,
-    margin: 10,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 20,
-  },
+  text: {
+    fontSize: 25,
+    marginBottom: 20,
+    width: 300,
+    textAlign: 'center',
+},
 });

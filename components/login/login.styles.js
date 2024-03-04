@@ -24,8 +24,7 @@ const styles = StyleSheet.create({
     color: '#F6F6F6',
     textAlign: 'center',
     lineHeight: 35,
-    fontFamily: 'Montserrat, sans-serif',
-    fontWeight: '600',
+    fontWeight: '500',
     fontSize: 19,
   },
   img: {
@@ -44,7 +43,7 @@ const styles = StyleSheet.create({
   },
   h1: {
     fontSize: 35,
-    fontWeight: '600',
+    fontWeight: '300',
     marginBottom: 5,
     textAlign: 'center',
   },
