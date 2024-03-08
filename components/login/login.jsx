@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable, Image, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, Image, Alert, KeyboardAvoidingView  } from 'react-native';
 import { auth } from '../../firebase/config';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import styles from './login.styles';
@@ -44,7 +44,7 @@ function LoginPage() {
     <View style={styles.container}>
       <Image source={Logo} style={styles.img} />
 
-      <View style={styles.containerForm}>
+      <KeyboardAvoidingView style={styles.containerForm} behavior="padding">
         <Text style={styles.h1}>Iniciar sesión</Text>
         <Text style={styles.p}>_____________</Text>
 
@@ -71,8 +71,7 @@ function LoginPage() {
 
           <Text style={styles.constraseñaOlvidada} onPress={handlePasswordReset}>¿Olvidaste tu contraseña?</Text>
         </View>
-
-      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 }

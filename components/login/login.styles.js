@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   img: {
     width: 120,
     height: 120,
-    marginBottom: 20,
+    marginBottom: 5,
   },
   containerForm: {
     backgroundColor: '#F6F6F6',
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     borderRadius: 5,
     width: 330,
-    height: 500,
+    height: 460,
   },
   h1: {
     fontSize: 35,
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   error: {
     color: 'red',
-    marginTop: 20,
+    marginTop: 10,
     alignContent: 'center',
     justifyContent: 'center',
     alignItems: 'center',
