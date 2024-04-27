@@ -10,7 +10,7 @@ import tierra from '../../assets/images/tierra.jpg';
 
 import TotalCount from '../../common/total-count';
 import { db } from '../../firebase/config';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, onSnapshot } from 'firebase/firestore';
 
 const ViewTotalCount = ({ producto }) => {
 
@@ -51,8 +51,21 @@ const ViewTotalCount = ({ producto }) => {
         fetchTotalMediano();
         fetchTotalChico();
         fetchNoAplica();
-        setTotal(totalGrande + totalMediano + totalChico + totalNoAplica);
+    }, []);
 
+    useEffect(() => {
+        const productsRef = collection(db, producto); // Reference to the collection
+
+        // Create a query (optional, filter by size if needed)
+        const productsQuery = productsRef; // No filtering in this example
+
+        const unsubscribe = onSnapshot(productsQuery, (snapshot) => {
+            const totalDocs = snapshot.docs.length;
+            setTotal(totalDocs);
+        });
+
+        // Perform cleanup on component unmount (important for memory leaks)
+        return () => unsubscribe(); // Unsubscribe from the listener
     }, []);
 
     var imagen;
