@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
+        height: 1410,
     },
     // Estilos para el contenedor horizontal
     containerHorizontal: {
