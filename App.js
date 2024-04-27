@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from '@react-navigation/native'; // Using React Navigation
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { selectUsers } from './store/usersSlice.js';
-import { useSelector } from 'react-redux';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import 'react-native-gesture-handler';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Provider } from 'react-redux';
+
 import store from './store/store.js';
 import { auth } from './firebase/config.js';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-import 'react-native-gesture-handler';
-import { createDrawerNavigator } from '@react-navigation/drawer';
 import LoginPage from './components/login/login.jsx';
 import Home from './components/home/home.jsx';
 import Logout from "./funcs/logout/logout.jsx";
 import Menu from "./components/menu/menu.jsx";
 import Producto from "./components/producto/index.jsx";
-import { useNavigation } from '@react-navigation/native';
+import ModalEditar from "./components/modal-editar/modal.jsx";
+import ModalCrear from "./components/modal-crear/modal.jsx";
+import ModalNotasCrear from "./components/modal-notas-crear/modal.jsx";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -34,17 +37,45 @@ const getIsSignedIn = () => {
   return isSignedIn;
 };
 
+const RootStack = createStackNavigator();
+
 function StackRoutes() {
-  const navigation = useNavigation();
+  return (
+    <RootStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <RootStack.Group>
+        <Stack.Screen name="Catalogos" component={Menu} initialParams={{ url: 'pedestales' }} />
+        <Stack.Screen name="pedestales" component={Producto} initialParams={{ producto: 'pedestales', titulo: "Pedestales" }} />
+        <Stack.Screen name="maceta-aire" component={Producto} initialParams={{ producto: 'maceta-aire', titulo: "Macetas Aire" }} />
+        <Stack.Screen name="maceta-concreto" component={Producto} initialParams={{ producto: 'maceta-concreto', titulo: "Macetas Concreto" }} />
+        <Stack.Screen name="maceta-ceramica" component={Producto} initialParams={{ producto: 'maceta-ceramica', titulo: "Macetas Cerámica" }} />
+        <Stack.Screen name="maceta-tierra" component={Producto} initialParams={{ producto: 'maceta-tierra', titulo: "Macetas Tierra" }} />
+      </RootStack.Group>
+      <RootStack.Group screenOptions={{ presentation: 'modal' }}>
+        <RootStack.Screen name="MyModal" component={ModalEditar} />
+        <RootStack.Screen name="ModalCrear" component={ModalCrear} />
+      </RootStack.Group>
+
+    </RootStack.Navigator>
+  );
+}
+
+function StackRoutesHome() {
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Catalogos" component={Menu} initialParams={{ url: 'pedestales' }} />
-      <Stack.Screen name="pedestales" component={Producto} initialParams={{ producto: 'pedestales', titulo: "Pedestales" }} />
-      <Stack.Screen name="maceta-aire" component={Producto} initialParams={{ producto: 'maceta-aire', titulo: "Macetas Aire" }} />
+      <RootStack.Group>
+        <Stack.Screen name="HomeToDo" component={Home} />
+      </RootStack.Group>
+      <RootStack.Group screenOptions={{ presentation: 'modal' }}>
+        <RootStack.Screen name="ModalNotasCrear" component={ModalNotasCrear} />
+      </RootStack.Group>
     </Stack.Navigator>
   );
 }
@@ -66,7 +97,7 @@ const App = () => {
         >
           {isSignedIn ? (
             <>
-              <Drawer.Screen name="Home" component={Home}
+              <Drawer.Screen name="Home" component={StackRoutesHome}
                 options={{
                   drawerIcon: ({ color = "black", size = 24 }) => (<Ionicons name="home" size={size} color={color} />),
                   headerStyle: {
@@ -83,7 +114,7 @@ const App = () => {
                   },
                   headerTintColor: '#FFFFFF',
                 }} />
-                
+
               <Drawer.Screen name="Logout" component={Logout}
                 options={{
                   drawerIcon: ({ color = "black", size = 24 }) => (<Ionicons name="log-out" size={size} color={color} />),
