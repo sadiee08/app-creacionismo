@@ -4,14 +4,11 @@ import { db } from '../../firebase/config';
 import { addDoc, collection, serverTimestamp, onSnapshot, deleteDoc, doc, updateDoc, increment } from 'firebase/firestore';
 
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/core';
 
 
 const Crud = ({ producto, titulo }) => {
     const [data, setData] = useState([]);
-
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -62,16 +59,16 @@ const Crud = ({ producto, titulo }) => {
                     list.push({ id: idAux, idGuid: doc.id, ...doc.data() });
                     idAux++;
                 });
-                //setData(list); Tiene TODOS los datos
-                listTable = list
-                console.log(listTable)
+                setData(list);
+                //listTable = list
+                //console.log(listTable)
 
-                for (var i = 0, len = listTable.length; i < len; i++) {
-                    delete listTable[i].timeStamp;
-                    delete listTable[i].description;
-                }
+                // for (var i = 0, len = listTable.length; i < len; i++) {
+                //     delete listTable[i].timeStamp;
+                //     delete listTable[i].description;
+                // }
 
-                setData(listTable);
+                //setData(listTable);
             },
             (error) => {
                 console.log(error);
@@ -82,39 +79,6 @@ const Crud = ({ producto, titulo }) => {
         };
     }, []);
 
-    const handleDelete = async (id) => {
-        try {
-            await deleteDoc(doc(db, producto, id));
-            setData(data.filter((item) => item.idGuid !== id));
-        } catch (err) {
-            console.log(err);
-        }
-    };
-
-    const handleAddProduct = async (id) => {
-        try {
-            const productoSeleccionado = doc(db, producto, id);
-            await updateDoc(productoSeleccionado, {
-                total: increment(1)
-            });
-
-        } catch (err) {
-            console.log(err);
-        }
-    }
-
-    const handleRemoveProduct = async (id) => {
-        try {
-            const productoSeleccionado = doc(db, producto, id);
-            await updateDoc(productoSeleccionado, {
-                total: increment(-1)
-            });
-
-        } catch (err) {
-            console.log(err);
-        }
-    }
-
     const renderHeader = () => (
         <View style={styles.header}>
             <Text style={styles.headerText}>Nombre</Text>
@@ -124,33 +88,55 @@ const Crud = ({ producto, titulo }) => {
         </View>
     );
 
+    const navigation = useNavigation();
+
+    const handleEditProduct = ({ item, id }) => {
+        navigation.navigate('MyModal', { producto: item, id: id, url: producto }); // Pass product data as a param
+    };
+
+    const handleCreate = () => {
+        navigation.navigate('ModalCrear', { url: producto });
+    };
+
     return (
         <>
+
+            <View style={styles.displayHeader}>
                 <Text style={styles.title}>{titulo}</Text>
-                <FlatList
-                    data={data}
-                    style={styles.container}
-                    renderItem={({ item }) => (
-                        <View style={styles.row}>
-                            <View style={styles.cell}>
-                                <Text style={styles.itemText}>{item.name}</Text>
-                            </View>
-                            <View style={styles.cell}>
-                                <Text style={styles.itemText}>{item.color}</Text>
-                            </View>
-                            <View style={styles.cell}>
-                                <Text style={styles.itemText}>{item.total}</Text>
-                            </View>
-                            <View style={styles.cell}>
-                                <TouchableOpacity style={styles.button} onPress={() => handleAddProduct(item.idGuid)}>
-                                    <Text style={styles.buttonText}>Editar</Text>
-                                </TouchableOpacity>
-                            </View>
+
+                <TouchableOpacity style={styles.buttonAdd} onPress={() => handleCreate()}>
+                    <Text style={styles.buttonTextAdd}>+</Text>
+                </TouchableOpacity>
+            </View>
+
+
+            <FlatList
+                data={data}
+                style={styles.container}
+                renderItem={({ item }) => (
+                    <View style={styles.row}>
+                        <View style={styles.cell}>
+                            <Text style={styles.itemText}>{item.name}</Text>
                         </View>
-                    )}
-                    keyExtractor={item => item.idGuid}
-                    ListHeaderComponent={renderHeader} // Agrega el encabezado de la tabla
-                />
+
+                        <View style={styles.cell}>
+                            <Text style={styles.itemText}>{item.color}</Text>
+                        </View>
+
+                        <View style={styles.cell}>
+                            <Text style={styles.itemText}>{item.total}</Text>
+                        </View>
+
+                        <View style={styles.cell}>
+                            <TouchableOpacity style={styles.button} onPress={() => handleEditProduct({ item, id: item.idGuid })}>
+                                <Text style={styles.buttonText}>Editar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )}
+                keyExtractor={item => item.idGuid}
+                ListHeaderComponent={renderHeader} // Agrega el encabezado de la tabla
+            />
         </>
     )
 }
@@ -209,6 +195,26 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#718EBF',
         fontSize: 16,
+        fontWeight: '500',
+        textAlign: 'center',
+    },
+    displayHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginStart: 15,
+        marginEnd: 15,
+        marginTop: 20,
+        marginBottom: 10,
+    },
+    buttonAdd: {
+        backgroundColor: '#4F4F4F',
+        borderRadius: 5,
+        width: 40,
+        padding: 1,
+    },
+    buttonTextAdd: {
+        color: '#fff',
+        fontSize: 25,
         fontWeight: '500',
         textAlign: 'center',
     },
